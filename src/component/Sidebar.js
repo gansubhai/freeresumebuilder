@@ -1,4 +1,5 @@
 import { Box, Typography, Select, MenuItem, InputLabel, FormControl, Tabs, Tab, Slider, TextField } from '@mui/material';
+import { Palette, FormatSize } from '@mui/icons-material';
 import { useState } from 'react';
 
 function Sidebar({
@@ -36,8 +37,32 @@ function Sidebar({
         Customize Resume
       </Typography>
       <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2 }}>
-        <Tab label="Design" />
-        <Tab label="Formatting" />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Palette fontSize="small" />
+              <Typography>Design</Typography>
+            </Box>
+          }
+          sx={{
+            backgroundColor: tabValue === 0 ? '#e0f7fa' : 'transparent',
+            borderRadius: 1,
+            '&:hover': { backgroundColor: '#b2ebf2' },
+          }}
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FormatSize fontSize="small" />
+              <Typography>Formatting</Typography>
+            </Box>
+          }
+          sx={{
+            backgroundColor: tabValue === 1 ? '#e0f7fa' : 'transparent',
+            borderRadius: 1,
+            '&:hover': { backgroundColor: '#b2ebf2' },
+          }}
+        />
       </Tabs>
 
       {tabValue === 0 && (
