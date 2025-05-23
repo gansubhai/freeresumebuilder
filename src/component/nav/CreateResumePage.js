@@ -13,6 +13,15 @@ function CreateResumePage() {
 
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
   const [color, setColor] = useState('#1976d2');
+  const [fontStyle, setFontStyle] = useState('Arial');
+  const [fontSize, setFontSize] = useState(10); // px
+  const [headingSize, setHeadingSize] = useState(16); // px
+  const [sectionSpacing, setSectionSpacing] = useState(6); // mm
+  const [paragraphSpacing, setParagraphSpacing] = useState(2); // mm
+  const [lineSpacing, setLineSpacing] = useState(1.15); // unitless
+  const [sideMargin, setSideMargin] = useState(10); // mm
+  const [paragraphIndent, setParagraphIndent] = useState(0); // mm
+
   const [resumeData, setResumeData] = useState({
     heading: {
       firstName: 'John',
@@ -75,12 +84,14 @@ function CreateResumePage() {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    let y = 10;
+    let y = sideMargin; // Top margin = sideMargin
+    const fontMap = { Arial: 'Helvetica', 'Times New Roman': 'Times' };
+    doc.setFont(fontMap[fontStyle]);
 
     if (selectedTemplate === 'template3') {
       // Two-column layout: 30% left (~60mm), 70% right (~140mm)
-      const leftX = 10;
-      const rightX = 70;
+      const leftX = sideMargin;
+      const rightX = sideMargin + 60;
       let leftY = y;
       let rightY = y;
 
@@ -90,248 +101,244 @@ function CreateResumePage() {
       doc.rect(0, 0, 60, 297, 'F'); // Left column: 60mm wide, A4 height
 
       // Left Column: Contact, Languages, Skills, Certifications, Hobbies
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.setTextColor(255, 255, 255); // White text
       doc.text('Contact', leftX, leftY);
-      leftY += 8;
-      doc.setFontSize(10);
-      doc.text(`${resumeData.heading.city}, ${resumeData.heading.country} ${resumeData.heading.pincode}`, leftX, leftY, { maxWidth: 45 });
-      leftY += doc.getTextDimensions(`${resumeData.heading.city}, ${resumeData.heading.country} ${resumeData.heading.pincode}`, { maxWidth: 45 }).h + 2;
-      doc.text(`Phone: ${resumeData.heading.phone}`, leftX, leftY);
-      leftY += 6;
-      doc.text(`Email: ${resumeData.heading.email}`, leftX, leftY, { maxWidth: 45 });
-      leftY += doc.getTextDimensions(`Email: ${resumeData.heading.email}`, { maxWidth: 45 }).h + 2;
-      doc.text(`LinkedIn: ${resumeData.heading.linkedin}`, leftX, leftY, { maxWidth: 45 });
-      leftY += doc.getTextDimensions(`LinkedIn: ${resumeData.heading.linkedin}`, { maxWidth: 45 }).h + 6;
+      leftY += sectionSpacing;
+      doc.setFontSize(fontSize);
+      doc.text(`${resumeData.heading.city}, ${resumeData.heading.country} ${resumeData.heading.pincode}`, leftX + paragraphIndent, leftY, { maxWidth: 45, lineHeightFactor: lineSpacing });
+      leftY += doc.getTextDimensions(`${resumeData.heading.city}, ${resumeData.heading.country} ${resumeData.heading.pincode}`, { maxWidth: 45 }).h + paragraphSpacing;
+      doc.text(`Phone: ${resumeData.heading.phone}`, leftX + paragraphIndent, leftY, { lineHeightFactor: lineSpacing });
+      leftY += doc.getTextDimensions(`Phone: ${resumeData.heading.phone}`, { maxWidth: 45 }).h + paragraphSpacing;
+      doc.text(`Email: ${resumeData.heading.email}`, leftX + paragraphIndent, leftY, { maxWidth: 45, lineHeightFactor: lineSpacing });
+      leftY += doc.getTextDimensions(`Email: ${resumeData.heading.email}`, { maxWidth: 45 }).h + paragraphSpacing;
+      doc.text(`LinkedIn: ${resumeData.heading.linkedin}`, leftX + paragraphIndent, leftY, { maxWidth: 45, lineHeightFactor: lineSpacing });
+      leftY += doc.getTextDimensions(`LinkedIn: ${resumeData.heading.linkedin}`, { maxWidth: 45 }).h + sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Languages', leftX, leftY);
-      leftY += 8;
-      doc.setFontSize(10);
+      leftY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.languages.forEach((lang) => {
-        doc.text(lang.name, leftX, leftY, { maxWidth: 30 });
+        doc.text(lang.name, leftX + paragraphIndent, leftY, { maxWidth: 30, lineHeightFactor: lineSpacing });
         // Draw proficiency bars
         const filled = lang.proficiency === 'Excellent' ? 3 : lang.proficiency === 'Good' ? 2 : 1;
         for (let i = 0; i < 3; i++) {
           doc.setFillColor(i < filled ? 255 : 211, i < filled ? 255 : 211, i < filled ? 255 : 211); // White or light grey
           doc.rect(leftX + 35 + i * 4, leftY - 2, 3, 1, 'F');
         }
-        leftY += 6;
+        leftY += 6 + paragraphSpacing;
       });
-      leftY += 6;
+      leftY += sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Skills', leftX, leftY);
-      leftY += 8;
-      doc.setFontSize(10);
+      leftY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.skills.forEach((skill) => {
-        doc.text(skill.name, leftX, leftY, { maxWidth: 30 });
+        doc.text(skill.name, leftX + paragraphIndent, leftY, { maxWidth: 30, lineHeightFactor: lineSpacing });
         // Draw proficiency bars
         const filled = skill.proficiency === 'Excellent' ? 3 : skill.proficiency === 'Good' ? 2 : 1;
         for (let i = 0; i < 3; i++) {
           doc.setFillColor(i < filled ? 255 : 211, i < filled ? 255 : 211, i < filled ? 255 : 211);
           doc.rect(leftX + 35 + i * 4, leftY - 2, 3, 1, 'F');
         }
-        leftY += 6;
+        leftY += 6 + paragraphSpacing;
       });
-      leftY += 6;
+      leftY += sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Certifications', leftX, leftY);
-      leftY += 8;
-      doc.setFontSize(10);
+      leftY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.certifications.forEach((cert) => {
-        doc.text(`${cert.name} (${cert.date})`, leftX, leftY, { maxWidth: 45 });
-        leftY += doc.getTextDimensions(`${cert.name} (${cert.date})`, { maxWidth: 45 }).h + 2;
+        doc.text(`${cert.name} (${cert.date})`, leftX + paragraphIndent, leftY, { maxWidth: 45, lineHeightFactor: lineSpacing });
+        leftY += doc.getTextDimensions(`${cert.name} (${cert.date})`, { maxWidth: 45 }).h + paragraphSpacing;
       });
-      leftY += 6;
+      leftY += sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Hobbies', leftX, leftY);
-      leftY += 8;
-      doc.setFontSize(10);
+      leftY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.hobbies.forEach((hobby) => {
-        doc.text(`• ${hobby}`, leftX, leftY, { maxWidth: 45 });
-        leftY += doc.getTextDimensions(`• ${hobby}`, { maxWidth: 45 }).h + 2;
+        doc.text(`• ${hobby}`, leftX + paragraphIndent, leftY, { maxWidth: 45, lineHeightFactor: lineSpacing });
+        leftY += doc.getTextDimensions(`• ${hobby}`, { maxWidth: 45 }).h + paragraphSpacing;
       });
 
       // Right Column: Heading, Summary, Experience, Education, Accomplishments
       doc.setTextColor(0, 0, 0); // Black text
-      doc.setFontSize(16);
+      doc.setFontSize(headingSize + 4); // Larger for name
       doc.text(`${resumeData.heading.firstName} ${resumeData.heading.lastName}`, rightX, rightY);
-      rightY += 8;
-      doc.setFontSize(12);
+      rightY += sectionSpacing;
+      doc.setFontSize(headingSize);
       doc.text(resumeData.heading.title, rightX, rightY);
-      rightY += 10;
+      rightY += sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Summary', rightX, rightY);
-      rightY += 8;
-      doc.setFontSize(10);
-      doc.text(resumeData.summary, rightX, rightY, { maxWidth: 130 });
-      rightY += doc.getTextDimensions(resumeData.summary, { maxWidth: 130 }).h + 8;
+      rightY += sectionSpacing;
+      doc.setFontSize(fontSize);
+      doc.text(resumeData.summary, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+      rightY += doc.getTextDimensions(resumeData.summary, { maxWidth: 130 }).h + sectionSpacing;
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Experience', rightX, rightY);
-      rightY += 8;
-      doc.setFontSize(10);
+      rightY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.experiences.forEach((exp) => {
-        doc.text(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, rightX, rightY, { maxWidth: 130 });
-        rightY += doc.getTextDimensions(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, { maxWidth: 130 }).h + 2;
-        doc.text(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, rightX, rightY);
-        rightY += 6;
-        doc.text(exp.description, rightX, rightY, { maxWidth: 130 });
-        rightY += doc.getTextDimensions(exp.description, { maxWidth: 130 }).h + 6;
+        doc.text(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, { maxWidth: 130 }).h + paragraphSpacing;
+        doc.text(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, rightX + paragraphIndent, rightY, { lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, { maxWidth: 130 }).h + paragraphSpacing;
+        doc.text(exp.description, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(exp.description, { maxWidth: 130 }).h + paragraphSpacing;
       });
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Education', rightX, rightY);
-      rightY += 8;
-      doc.setFontSize(10);
+      rightY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.educations.forEach((edu) => {
-        doc.text(`${edu.degree}, ${edu.fieldOfStudy}`, rightX, rightY, { maxWidth: 130 });
-        rightY += doc.getTextDimensions(`${edu.degree}, ${edu.fieldOfStudy}`, { maxWidth: 130 }).h + 2;
-        doc.text(`${edu.schoolName}, ${edu.schoolLocation}`, rightX, rightY, { maxWidth: 130 });
-        rightY += doc.getTextDimensions(`${edu.schoolName}, ${edu.schoolLocation}`, { maxWidth: 130 }).h + 2;
-        doc.text(`${edu.graduationMonth} ${edu.graduationYear}`, rightX, rightY);
-        rightY += 8;
+        doc.text(`${edu.degree}, ${edu.fieldOfStudy}`, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`${edu.degree}, ${edu.fieldOfStudy}`, { maxWidth: 130 }).h + paragraphSpacing;
+        doc.text(`${edu.schoolName}, ${edu.schoolLocation}`, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`${edu.schoolName}, ${edu.schoolLocation}`, { maxWidth: 130 }).h + paragraphSpacing;
+        doc.text(`${edu.graduationMonth} ${edu.graduationYear}`, rightX + paragraphIndent, rightY, { lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`${edu.graduationMonth} ${edu.graduationYear}`, { maxWidth: 130 }).h + paragraphSpacing;
       });
 
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
       doc.text('Accomplishments', rightX, rightY);
-      rightY += 8;
-      doc.setFontSize(10);
+      rightY += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.accomplishments.forEach((acc) => {
-        doc.text(`• ${acc}`, rightX, rightY, { maxWidth: 130 });
-        rightY += doc.getTextDimensions(`• ${acc}`, { maxWidth: 130 }).h + 6;
+        doc.text(`• ${acc}`, rightX + paragraphIndent, rightY, { maxWidth: 130, lineHeightFactor: lineSpacing });
+        rightY += doc.getTextDimensions(`• ${acc}`, { maxWidth: 130 }).h + paragraphSpacing;
       });
     } else {
       // Single-column for Classic and Modern Templates
-      doc.setFontSize(16);
-      doc.text(`${resumeData.heading.firstName} ${resumeData.heading.lastName}`, 10, y);
-      y += 10;
-      doc.setFontSize(12);
-      doc.text(resumeData.heading.title, 10, y);
-      y += 6;
-      doc.text(`${resumeData.heading.city}, ${resumeData.heading.country} | ${resumeData.heading.pincode}`, 10, y);
-      y += 6;
-      doc.text(`${resumeData.heading.phone} | ${resumeData.heading.email}`, 10, y);
-      y += 6;
-      doc.text(`LinkedIn: ${resumeData.heading.linkedin}`, 10, y);
-      y += 10;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.setFontSize(headingSize + 4);
+      doc.text(`${resumeData.heading.firstName} ${resumeData.heading.lastName}`, sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(headingSize);
+      doc.text(resumeData.heading.title, sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
+      doc.text(`${resumeData.heading.city}, ${resumeData.heading.country} | ${resumeData.heading.pincode}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`${resumeData.heading.city}, ${resumeData.heading.country} | ${resumeData.heading.pincode}`, { maxWidth: 190 }).h + paragraphSpacing;
+      doc.text(`${resumeData.heading.phone} | ${resumeData.heading.email}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`${resumeData.heading.phone} | ${resumeData.heading.email}`, { maxWidth: 190 }).h + paragraphSpacing;
+      doc.text(`LinkedIn: ${resumeData.heading.linkedin}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`LinkedIn: ${resumeData.heading.linkedin}`, { maxWidth: 190 }).h + sectionSpacing;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Summary', 10, y);
-      y += 8;
-      doc.setFontSize(12);
-      doc.text(resumeData.summary, 10, y, { maxWidth: 190 });
-      y += doc.getTextDimensions(resumeData.summary, { maxWidth: 190 }).h + 8;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.setFontSize(headingSize);
+      doc.text('Summary', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
+      doc.text(resumeData.summary, sideMargin + paragraphIndent, y, { maxWidth: 190 - 2 * sideMargin, lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(resumeData.summary, { maxWidth: 190 - 2 * sideMargin }).h + sectionSpacing;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Skills', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Skills', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.skills.forEach((skill) => {
-        doc.text(`• ${skill.name} (${skill.proficiency})`, 10, y);
-        y += 6;
+        doc.text(`• ${skill.name} (${skill.proficiency})`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`• ${skill.name} (${skill.proficiency})`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      y += 2;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Experience', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Experience', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.experiences.forEach((exp) => {
-        doc.text(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, 10, y);
-        y += 6;
-        doc.text(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, 10, y);
-        y += 6;
-        doc.text(exp.description, 10, y, { maxWidth: 190 });
-        y += doc.getTextDimensions(exp.description, { maxWidth: 190 }).h + 6;
+        doc.text(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`${exp.jobTitle}, ${exp.employer}, ${exp.city}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+        doc.text(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+        doc.text(exp.description, sideMargin + paragraphIndent, y, { maxWidth: 190 - 2 * sideMargin, lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(exp.description, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Education', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Education', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.educations.forEach((edu) => {
-        doc.text(`${edu.degree}, ${edu.fieldOfStudy}`, 10, y);
-        y += 6;
-        doc.text(`${edu.schoolName}, ${edu.schoolLocation}`, 10, y);
-        y += 6;
-        doc.text(`${edu.graduationMonth} ${edu.graduationYear}`, 10, y);
-        y += 8;
+        doc.text(`${edu.degree}, ${edu.fieldOfStudy}`, sideMargin + paragraphIndent, y, { maxWidth: 190 - 2 * sideMargin, lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`${edu.degree}, ${edu.fieldOfStudy}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+        doc.text(`${edu.schoolName}, ${edu.schoolLocation}`, sideMargin + paragraphIndent, y, { maxWidth: 190 - 2 * sideMargin, lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`${edu.schoolName}, ${edu.schoolLocation}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+        doc.text(`${edu.graduationMonth} ${edu.graduationYear}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`${edu.graduationMonth} ${edu.graduationYear}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Hobbies and Interests', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Hobbies and Interests', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.hobbies.forEach((hobby) => {
-        doc.text(`• ${hobby}`, 10, y);
-        y += 6;
+        doc.text(`• ${hobby}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`• ${hobby}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      y += 2;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Languages', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Languages', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.languages.forEach((lang) => {
-        doc.text(`• ${lang.name} (${lang.proficiency})`, 10, y);
-        y += 6;
+        doc.text(`• ${lang.name} (${lang.proficiency})`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`• ${lang.name} (${lang.proficiency})`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      y += 2;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Certifications', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Certifications', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.certifications.forEach((cert) => {
-        doc.text(`• ${cert.name} (${cert.date})`, 10, y);
-        y += 6;
+        doc.text(`• ${cert.name} (${cert.date})`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`• ${cert.name} (${cert.date})`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      y += 2;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Accomplishments', 10, y);
-      y += 8;
-      doc.setFontSize(12);
+      doc.setFontSize(headingSize);
+      doc.text('Accomplishments', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
       resumeData.accomplishments.forEach((acc) => {
-        doc.text(`• ${acc}`, 10, y);
-        y += 6;
+        doc.text(`• ${acc}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+        y += doc.getTextDimensions(`• ${acc}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
       });
-      y += 2;
-      doc.line(10, y, 200, y);
-      y += 10;
+      doc.line(sideMargin, y, 210 - sideMargin, y);
+      y += sectionSpacing;
 
-      doc.setFontSize(14);
-      doc.text('Personal Information', 10, y);
-      y += 8;
-      doc.setFontSize(12);
-      doc.text(`Date of Birth: ${resumeData.personalInfo.dateOfBirth}`, 10, y);
-      y += 6;
-      doc.text(`Gender: ${resumeData.personalInfo.gender}`, 10, y);
-      y += 6;
-      doc.text(`Nationality: ${resumeData.personalInfo.nationality}`, 10, y);
-      y += 6;
-      doc.text(`Marital Status: ${resumeData.personalInfo.maritalStatus}`, 10, y);
+      doc.setFontSize(headingSize);
+      doc.text('Personal Information', sideMargin, y);
+      y += sectionSpacing;
+      doc.setFontSize(fontSize);
+      doc.text(`Date of Birth: ${resumeData.personalInfo.dateOfBirth}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`Date of Birth: ${resumeData.personalInfo.dateOfBirth}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+      doc.text(`Gender: ${resumeData.personalInfo.gender}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`Gender: ${resumeData.personalInfo.gender}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+      doc.text(`Nationality: ${resumeData.personalInfo.nationality}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
+      y += doc.getTextDimensions(`Nationality: ${resumeData.personalInfo.nationality}`, { maxWidth: 190 - 2 * sideMargin }).h + paragraphSpacing;
+      doc.text(`Marital Status: ${resumeData.personalInfo.maritalStatus}`, sideMargin + paragraphIndent, y, { lineHeightFactor: lineSpacing });
     }
 
     doc.save('resume.pdf');
@@ -351,7 +358,24 @@ function CreateResumePage() {
         templates={templates}
         selectedTemplate={selectedTemplate}
         setSelectedTemplate={setSelectedTemplate}
+        color={color}
         setColor={setColor}
+        fontStyle={fontStyle}
+        setFontStyle={setFontStyle}
+        fontSize={fontSize}
+        setFontSize={setFontSize}
+        headingSize={headingSize}
+        setHeadingSize={setHeadingSize}
+        sectionSpacing={sectionSpacing}
+        setSectionSpacing={setSectionSpacing}
+        paragraphSpacing={paragraphSpacing}
+        setParagraphSpacing={setParagraphSpacing}
+        lineSpacing={lineSpacing}
+        setLineSpacing={setLineSpacing}
+        sideMargin={sideMargin}
+        setSideMargin={setSideMargin}
+        paragraphIndent={paragraphIndent}
+        setParagraphIndent={setParagraphIndent}
       />
       <Box sx={{ flexGrow: 1, p: 2 }}>
         <Button variant="contained" onClick={generatePDF} sx={{ mb: 2 }}>
@@ -362,6 +386,14 @@ function CreateResumePage() {
           resumeData={resumeData}
           setResumeData={setResumeData}
           color={color}
+          fontStyle={fontStyle}
+          fontSize={fontSize}
+          headingSize={headingSize}
+          sectionSpacing={sectionSpacing}
+          paragraphSpacing={paragraphSpacing}
+          lineSpacing={lineSpacing}
+          sideMargin={sideMargin}
+          paragraphIndent={paragraphIndent}
         />
       </Box>
     </Box>
