@@ -1,19 +1,37 @@
-import { Box, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/material';
+import RichTextEditor from './RichTextEditor';
 
-function SummarySection({ summary, setResumeData }) {
+function SummarySection({
+  summary,
+  setSummary,
+  color,
+  fontStyle,
+  fontSize,
+  headingSize,
+  sectionSpacing,
+  paragraphSpacing,
+  lineSpacing,
+  sideMargin,
+  paragraphIndent,
+}) {
   return (
-    <Box sx={{ mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Summary
-      </Typography>
-      <TextField
-        label="Summary"
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: `${paragraphSpacing}px`,
+        textIndent: `${paragraphIndent}px`,
+      }}
+    >
+      <RichTextEditor
         value={summary}
-        onChange={(e) => setResumeData((prev) => ({ ...prev, summary: e.target.value }))}
-        multiline
-        rows={4}
-        fullWidth
-        variant="outlined"
+        onChange={setSummary}
+        fontStyle={fontStyle}
+        fontSize={fontSize}
+        color={color}
+        lineSpacing={lineSpacing}
+        sideMargin={sideMargin}
+        placeholder="Enter your professional summary..."
       />
     </Box>
   );

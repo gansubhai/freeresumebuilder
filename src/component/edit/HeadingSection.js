@@ -1,66 +1,57 @@
-import { Box, TextField, Grid } from '@mui/material';
-import EditableSection from '../EditableSection';
+import { Box, Grid, TextField } from '@mui/material';
 
-function HeadingSection({ heading, setResumeData }) {
-  const updateField = (field, value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      heading: { ...prev.heading, [field]: value },
-    }));
+function HeadingSection({
+  heading,
+  setHeading,
+  color,
+  fontStyle,
+  fontSize,
+  headingSize,
+  sectionSpacing,
+  paragraphSpacing,
+  lineSpacing,
+  sideMargin,
+  paragraphIndent,
+}) {
+  const handleChange = (field) => (event) => {
+    setHeading({ ...heading, [field]: event.target.value });
   };
 
+  const fields = [
+    { label: 'First Name', field: 'firstName', value: heading.firstName },
+    { label: 'Last Name', field: 'lastName', value: heading.lastName },
+    { label: 'Title', field: 'title', value: heading.title },
+    { label: 'City', field: 'city', value: heading.city },
+    { label: 'Country', field: 'country', value: heading.country },
+    { label: 'Pincode', field: 'pincode', value: heading.pincode },
+    { label: 'Phone', field: 'phone', value: heading.phone },
+    { label: 'Email', field: 'email', value: heading.email },
+    { label: 'LinkedIn', field: 'linkedin', value: heading.linkedin },
+  ];
+
   return (
-    <Box>
+    <Box
+      sx={{
+        fontFamily: fontStyle,
+        fontSize: `${fontSize}px`,
+        lineHeight: lineSpacing,
+        marginLeft: `${sideMargin}px`,
+        marginRight: `${sideMargin}px`,
+        textIndent: `${paragraphIndent}px`,
+      }}
+    >
       <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <EditableSection
-            label="First Name"
-            value={heading.firstName}
-            onChange={(value) => updateField('firstName', value)}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <EditableSection
-            label="Last Name"
-            value={heading.lastName}
-            onChange={(value) => updateField('lastName', value)}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <EditableSection
-            label="City"
-            value={heading.city}
-            onChange={(value) => updateField('city', value)}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <EditableSection
-            label="Country"
-            value={heading.country}
-            onChange={(value) => updateField('country', value)}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <EditableSection
-            label="Pincode"
-            value={heading.pincode}
-            onChange={(value) => updateField('pincode', value)}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <EditableSection
-            label="Phone"
-            value={heading.phone}
-            onChange={(value) => updateField('phone', value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <EditableSection
-            label="Email"
-            value={heading.email}
-            onChange={(value) => updateField('email', value)}
-          />
-        </Grid>
+        {fields.map(({ label, field, value }) => (
+          <Grid item xs={12} sm={6} key={field}>
+            <TextField
+              label={label}
+              value={value}
+              onChange={handleChange(field)}
+              fullWidth
+              size="small"
+            />
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

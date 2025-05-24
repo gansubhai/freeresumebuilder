@@ -50,7 +50,7 @@ function SkillsSection({ skills, setResumeData }) {
           )}
           sx={{ flexGrow: 1 }}
         />
-        <FormControl sx={{ minWidth: 120 }}>
+        <FormControl sx={{ minWidth: 150 }}>
           <InputLabel>Proficiency</InputLabel>
           <Select
             value={newSkill.proficiency}

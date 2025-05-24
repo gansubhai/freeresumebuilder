@@ -35,7 +35,12 @@ function CreateResumePage() {
       email: 'john.doe@example.com',
       linkedin: 'https://linkedin.com/in/johndoe',
     },
-    summary: 'Experienced professional with a passion for technology...',
+    summary: JSON.stringify([
+      {
+        type: 'paragraph',
+        children: [{ text: 'Experienced professional with a passion for technology...' }],
+      },
+    ]),
     skills: [
       { name: 'JavaScript', proficiency: 'Excellent' },
       { name: 'React', proficiency: 'Excellent' },
@@ -98,7 +103,11 @@ function CreateResumePage() {
   }, [selectedTemplate]);
 
   const handleOpenDialog = (section = null, index = null) => {
-    setCustomSection(section || { heading: '', description: '' });
+    setCustomSection(
+      section
+        ? { heading: section.title, description: section.items?.[0]?.description || '' }
+        : { heading: '', description: '' }
+    );
     setEditIndex(index);
     setDialogOpen(true);
   };
@@ -111,10 +120,16 @@ function CreateResumePage() {
 
   const handleSaveSection = () => {
     const newCustomSections = [...resumeData.customSections];
+    const newSection = {
+      title: customSection.heading,
+      items: customSection.description
+        ? [{ title: customSection.heading, description: customSection.description }]
+        : [],
+    };
     if (editIndex !== null) {
-      newCustomSections[editIndex] = customSection;
+      newCustomSections[editIndex] = newSection;
     } else {
-      newCustomSections.push(customSection);
+      newCustomSections.push(newSection);
     }
     setResumeData({ ...resumeData, customSections: newCustomSections });
     handleCloseDialog();
