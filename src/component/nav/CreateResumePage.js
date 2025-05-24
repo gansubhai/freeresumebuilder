@@ -86,6 +86,8 @@ function CreateResumePage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [customSection, setCustomSection] = useState({ heading: '', description: '' });
   const [editIndex, setEditIndex] = useState(null);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
 
   const previewRef = useRef(null);
 
@@ -133,6 +135,13 @@ function CreateResumePage() {
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
+  // Calculate preview width based on sidebar states
+  const previewWidth = () => {
+    if (isLeftSidebarOpen && isRightSidebarOpen) return '50%';
+    if (isLeftSidebarOpen || isRightSidebarOpen) return '75%';
+    return '90%';
+  };
+
   return (
     <Box sx={{ mt: 8, display: 'flex', height: 'calc(100vh - 64px)' }}>
       <Sidebar
@@ -157,9 +166,11 @@ function CreateResumePage() {
         setSideMargin={setSideMargin}
         paragraphIndent={paragraphIndent}
         setParagraphIndent={setParagraphIndent}
+        isOpen={isLeftSidebarOpen}
+        setIsOpen={setIsLeftSidebarOpen}
       />
-      <Box sx={{ flexGrow: 1, display: 'flex', p: 2 }}>
-        <Box ref={previewRef} sx={{ width: '75%', pr: 2 }}>
+      <Box sx={{ flexGrow: 1, display: 'flex', p: 2, width: previewWidth() }}>
+        <Box ref={previewRef} sx={{ width: '100%', pr: isRightSidebarOpen ? 2 : 0 }}>
           <ResumePreview
             template={selectedTemplate}
             resumeData={resumeData}
@@ -175,26 +186,28 @@ function CreateResumePage() {
             paragraphIndent={paragraphIndent}
           />
         </Box>
-        <RightSidebar
-          color={color}
-          resumeData={resumeData}
-          setResumeData={setResumeData}
-          generatePDF={generatePDF}
-          handlePrint={handlePrint}
-          handleEmail={handleEmail}
-          handleOpenDialog={handleOpenDialog}
-          handleDeleteSection={handleDeleteSection}
-          selectedTemplate={selectedTemplate}
-          fontStyle={fontStyle}
-          fontSize={fontSize}
-          headingSize={headingSize}
-          sectionSpacing={sectionSpacing}
-          paragraphSpacing={paragraphSpacing}
-          lineSpacing={lineSpacing}
-          sideMargin={sideMargin}
-          paragraphIndent={paragraphIndent}
-        />
       </Box>
+      <RightSidebar
+        color={color}
+        resumeData={resumeData}
+        setResumeData={setResumeData}
+        generatePDF={generatePDF}
+        handlePrint={handlePrint}
+        handleEmail={handleEmail}
+        handleOpenDialog={handleOpenDialog}
+        handleDeleteSection={handleDeleteSection}
+        selectedTemplate={selectedTemplate}
+        fontStyle={fontStyle}
+        fontSize={fontSize}
+        headingSize={headingSize}
+        sectionSpacing={sectionSpacing}
+        paragraphSpacing={paragraphSpacing}
+        lineSpacing={lineSpacing}
+        sideMargin={sideMargin}
+        paragraphIndent={paragraphIndent}
+        isOpen={isRightSidebarOpen}
+        setIsOpen={setIsRightSidebarOpen}
+      />
       <CustomSectionDialog
         open={dialogOpen}
         onClose={handleCloseDialog}
