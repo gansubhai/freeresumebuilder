@@ -112,7 +112,7 @@ function ProfessionalTemplate({
         }}
         aria-label="Resume preview"
       >
-        <Box sx={{ bgcolor: color, color: '#fff', p: 3, mb: mmToPx(sectionSpacing) / 96 }}>
+        <Box sx={{ p: 3 }}>
           <SectionWrapper
             title="Heading"
             isOpen={sectionStates.heading}
@@ -132,8 +132,6 @@ function ProfessionalTemplate({
               paragraphIndent={paragraphIndent}
             />
           </SectionWrapper>
-        </Box>
-        <Box sx={{ p: 3 }}>
           <SectionWrapper
             title="Summary"
             isOpen={sectionStates.summary}
@@ -305,6 +303,36 @@ function ProfessionalTemplate({
               paragraphIndent={paragraphIndent}
             />
           </SectionWrapper>
+          {normalizedCustomSections.map((section, index) => (
+            <Box key={`custom-section-${index}`} sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
+              <SectionWrapper
+                title={section.title}
+                isOpen={sectionStates.customSections[index]}
+                toggleSection={() => toggleSection('customSections', index)}
+              >
+                <CustomSection
+                  section={section}
+                  updateSection={(updatedSection) => {
+                    const newCustomSections = [...(resumeData.customSections || [])];
+                    newCustomSections[index] = { ...updatedSection, heading: updatedSection.title };
+                    setResumeData({ ...resumeData, customSections: newCustomSections });
+                  }}
+                  addItem={handleAddCustomItem(index)}
+                  deleteItem={handleDeleteCustomItem(index)}
+                  deleteSection={handleDeleteCustomSection(index)}
+                  color={color}
+                  fontStyle={fontStyle}
+                  fontSize={fontSize}
+                  headingSize={headingSize}
+                  sectionSpacing={sectionSpacing}
+                  paragraphSpacing={paragraphSpacing}
+                  lineSpacing={lineSpacing}
+                  sideMargin={sideMargin}
+                  paragraphIndent={paragraphIndent}
+                />
+              </SectionWrapper>
+            </Box>
+          ))}
           <SectionWrapper
             title="Preview (Professional Template)"
             isOpen={sectionStates.preview}
@@ -484,10 +512,10 @@ function ProfessionalTemplate({
                         pl: mmToPx(paragraphIndent) / 96,
                       }}
                     >
-                      {typeof safeResumeData.summary === 'string' && safeResumeData.summary.startsWith('[{') 
+                      {typeof safeResumeData.summary === 'string' && safeResumeData.summary.startsWith('[{')
                         ? JSON.parse(safeResumeData.summary)
-                            .map((node) => node.children.map((child) => child.text).join(''))
-                            .join('\n')
+                          .map((node) => node.children.map((child) => child.text).join(''))
+                          .join('\n')
                         : safeResumeData.summary}
                     </Typography>
                   </Box>
@@ -646,36 +674,7 @@ function ProfessionalTemplate({
               </Grid>
             </Grid>
           </SectionWrapper>
-          {normalizedCustomSections.map((section, index) => (
-            <Box key={`custom-section-${index}`} sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <SectionWrapper
-                title={section.title}
-                isOpen={sectionStates.customSections[index]}
-                toggleSection={() => toggleSection('customSections', index)}
-              >
-                <CustomSection
-                  section={section}
-                  updateSection={(updatedSection) => {
-                    const newCustomSections = [...(resumeData.customSections || [])];
-                    newCustomSections[index] = { ...updatedSection, heading: updatedSection.title };
-                    setResumeData({ ...resumeData, customSections: newCustomSections });
-                  }}
-                  addItem={handleAddCustomItem(index)}
-                  deleteItem={handleDeleteCustomItem(index)}
-                  deleteSection={handleDeleteCustomSection(index)}
-                  color={color}
-                  fontStyle={fontStyle}
-                  fontSize={fontSize}
-                  headingSize={headingSize}
-                  sectionSpacing={sectionSpacing}
-                  paragraphSpacing={paragraphSpacing}
-                  lineSpacing={lineSpacing}
-                  sideMargin={sideMargin}
-                  paragraphIndent={paragraphIndent}
-                />
-              </SectionWrapper>
-            </Box>
-          ))}
+
         </Box>
       </Paper>
     </Box>

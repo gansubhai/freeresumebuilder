@@ -23,7 +23,7 @@ class ErrorBoundary extends Component {
   }
 }
 
-function ResumePreview({ resumeData, template, setResumeData }) {
+function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, fontSize, headingSize, sectionSpacing, paragraphSpacing, lineSpacing, sideMargin, paragraphIndent }) {
   console.log('ResumePreview props:', { resumeData, template });
 
   const templateComponents = {
@@ -78,15 +78,15 @@ function ResumePreview({ resumeData, template, setResumeData }) {
         <TemplateComponent
           resumeData={resumeData}
           setResumeData={setResumeData}
-          color="#1976d2"
-          fontStyle="Roboto"
-          fontSize={12}
-          headingSize={16}
-          sectionSpacing={5}
-          paragraphSpacing={3}
-          lineSpacing={1.5}
-          sideMargin={10}
-          paragraphIndent={5}
+          color={color}
+          fontStyle={fontStyle}
+          fontSize={fontSize}
+          headingSize={headingSize}
+          sectionSpacing={sectionSpacing}
+          paragraphSpacing={paragraphSpacing}
+          lineSpacing={lineSpacing}
+          sideMargin={sideMargin}
+          paragraphIndent={paragraphIndent}
           sectionStates={sectionStates}
           toggleSection={toggleSection}
         />

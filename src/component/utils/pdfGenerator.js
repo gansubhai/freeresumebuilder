@@ -1,5 +1,31 @@
 import jsPDF from 'jspdf';
 
+function transformSlateJSON(slateJSON) {
+  try {
+    const nodes = typeof slateJSON === 'string' ? JSON.parse(slateJSON) : slateJSON;
+    if (!Array.isArray(nodes)) return '';
+
+    const lines = [];
+    nodes.forEach((node) => {
+      if (node.type === 'paragraph') {
+        const text = node.children.map((child) => child.text).join('');
+        lines.push(text);
+      } else if (node.type === 'bulleted-list') {
+        node.children.forEach((listItem) => {
+          if (listItem.type === 'list-item') {
+            const text = listItem.children.map((child) => child.text).join('');
+            lines.push(`• ${text}`);
+          }
+        });
+      }
+    });
+    return lines.join('\n');
+  } catch (e) {
+    console.warn('Invalid Slate JSON:', e);
+    return '';
+  }
+}
+
 export const hexToRgb = (hex) => {
   const validHex = typeof hex === 'string' && hex.startsWith('#') ? hex : '#000000';
   const r = parseInt(validHex.slice(1, 3), 16);
@@ -167,7 +193,7 @@ export const generatePDF = (
     doc.setFontSize(headingSize);
     rightY += safeText('Summary', rightX, rightY) + sectionSpacing;
     doc.setFontSize(fontSize);
-    rightY += safeText(safeResumeData.summary, rightX + paragraphIndent, rightY, {
+    rightY += safeText(transformSlateJSON(safeResumeData.summary), rightX + paragraphIndent, rightY, {
       maxWidth: 130,
       lineHeightFactor: lineSpacing,
     }) + sectionSpacing;
