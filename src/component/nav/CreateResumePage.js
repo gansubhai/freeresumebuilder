@@ -7,6 +7,7 @@ import CustomSectionDialog from '../CustomSectionDialog';
 import { generatePDF } from '../utils/pdfGenerator';
 
 function CreateResumePage() {
+  console.log("CreateResumePage");
   const templates = [
     { id: 'template1', name: 'Classic Template' },
     { id: 'template2', name: 'Modern Template' },
@@ -121,10 +122,8 @@ function CreateResumePage() {
   const handleSaveSection = () => {
     const newCustomSections = [...resumeData.customSections];
     const newSection = {
-      title: customSection.heading,
-      items: customSection.description
-        ? [{ title: customSection.heading, description: customSection.description }]
-        : [],
+      heading: customSection.heading,
+      description: customSection.description,
     };
     if (editIndex !== null) {
       newCustomSections[editIndex] = newSection;

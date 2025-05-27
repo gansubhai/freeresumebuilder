@@ -19,6 +19,7 @@ import {
     fontStyle,
     fontSize,
   }) {
+    console.log("CustomSectionDialog");
     return (
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>{editIndex !== null ? 'Edit Custom Section' : 'Add Custom Section'}</DialogTitle>

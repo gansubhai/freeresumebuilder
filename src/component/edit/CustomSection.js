@@ -1,13 +1,10 @@
-import { Box, TextField, IconButton, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Typography, Button, TextField } from '@mui/material';
+import RichTextEditor from './RichTextEditor'; // Adjust path if needed
 
 function CustomSection({
   section,
-  customSection, // Support legacy prop
+  customSection,
   updateSection,
-  addItem,
-  deleteItem,
   deleteSection,
   color,
   fontStyle,
@@ -19,101 +16,69 @@ function CustomSection({
   sideMargin,
   paragraphIndent,
 }) {
-  // Normalize section data
+  console.log('CustomSection props:', { section, customSection });
+
+  const defaultSlateValue = JSON.stringify([
+    { type: 'paragraph', children: [{ text: '' }] },
+  ]);
+
   const sectionData = section || customSection;
-  if (!sectionData || typeof sectionData !== 'object') {
-    console.warn('CustomSection received invalid section:', sectionData);
-    return (
-      <Box sx={{ padding: 2, color: 'error.main' }}>
-        <Typography>Error: Invalid section data</Typography>
-      </Box>
-    );
+  const validSection = {
+    heading: sectionData?.heading || sectionData?.title || 'Untitled Section',
+    description: sectionData?.description || defaultSlateValue,
+  };
+
+  if (!sectionData) {
+    console.warn('CustomSection: Invalid section data');
+    return <Box>Invalid section data</Box>;
   }
 
-  const validSection = {
-    title: sectionData.title || sectionData.heading || 'Untitled Section',
-    items: Array.isArray(sectionData.items) ? sectionData.items : [],
+  const handleHeadingChange = (e) => {
+    updateSection({ ...validSection, heading: e.target.value });
   };
 
-  const handleSectionChange = (field) => (event) => {
-    updateSection({ ...validSection, [field]: event.target.value });
+  const handleDescriptionChange = (value) => {
+    updateSection({ ...validSection, description: JSON.stringify(value) });
   };
 
-  const handleItemChange = (index, field) => (event) => {
-    const newItems = [...validSection.items];
-    newItems[index] = { ...newItems[index], [field]: event.target.value };
-    updateSection({ ...validSection, items: newItems });
-  };
-
-  const items = validSection.items;
+  let slateValue;
+  try {
+    slateValue = JSON.parse(validSection.description);
+  } catch (e) {
+    console.warn('Invalid Slate JSON in description, using default:', e);
+    slateValue = JSON.parse(defaultSlateValue);
+  }
 
   return (
-    <Box
-      sx={{
-        fontFamily: fontStyle,
-        fontSize: `${fontSize}px`,
-        lineHeight: lineSpacing,
-        marginLeft: `${sideMargin}px`,
-        marginRight: `${sideMargin}px`,
-        textIndent: `${paragraphIndent}px`,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${paragraphSpacing}px`,
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <TextField
-          label="Section Title"
-          value={validSection.title}
-          onChange={handleSectionChange('title')}
-          fullWidth
-          size="small"
-          aria-label="Custom section title"
-        />
-        <IconButton onClick={deleteSection} aria-label="Delete section">
-          <DeleteIcon />
-        </IconButton>
-      </Box>
-      {items.length === 0 && (
-        <Typography sx={{ color: 'text.secondary' }}>
-          No items. Click the plus icon to add an item.
+    <Box sx={{ mt: sectionSpacing / 96, fontFamily: fontStyle }}>
+      <TextField
+        label="Section Heading"
+        value={validSection.heading}
+        onChange={handleHeadingChange}
+        sx={{ mb: paragraphSpacing / 96, fontSize, lineHeight: lineSpacing }}
+        fullWidth
+      />
+      <Box sx={{ mb: paragraphSpacing / 96 }}>
+        <Typography
+          variant="body2"
+          sx={{ fontSize, mb: paragraphSpacing / 96, color: 'text.secondary' }}
+        >
+          Description
         </Typography>
-      )}
-      {items.map((item, index) => (
-        <Box key={index} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <TextField
-              label="Item Title"
-              value={item.title || ''}
-              onChange={handleItemChange(index, 'title')}
-              fullWidth
-              size="small"
-              aria-label={`Item ${index + 1} title`}
-            />
-            <IconButton
-              onClick={() => deleteItem(index)}
-              aria-label={`Delete item ${index + 1}`}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-          <TextField
-            label="Description"
-            value={item.description || ''}
-            onChange={handleItemChange(index, 'description')}
-            fullWidth
-            multiline
-            rows={3}
-            size="small"
-            aria-label={`Item ${index + 1} description`}
-          />
-        </Box>
-      ))}
-      <Box>
-        <IconButton onClick={addItem} aria-label="Add item">
-          <AddIcon />
-        </IconButton>
+        <RichTextEditor
+          value={slateValue}
+          onChange={handleDescriptionChange}
+          fontStyle={fontStyle}
+          fontSize={fontSize}
+          lineSpacing={lineSpacing}
+        />
       </Box>
+      <Button
+        onClick={deleteSection}
+        sx={{ color, fontSize, mt: paragraphSpacing / 96 }}
+      >
+        Delete Section
+      </Button>
     </Box>
   );
 }
