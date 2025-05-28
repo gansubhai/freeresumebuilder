@@ -126,72 +126,73 @@ function ExperienceSection({
             </Button>
           </Box>
           {expanded === index && (
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <EditableSection
-                  label="Job Title"
-                  value={exp.jobTitle}
-                  onChange={(value) => updateExperience(index, 'jobTitle', value)}
-                />
+            <> {/* Use a React Fragment to group elements */}
+              <Grid container spacing={2}>
+                <Grid item xs={6} sm={6} md={6}>
+                  <EditableSection
+                    label="Job Title"
+                    value={exp.jobTitle}
+                    onChange={(value) => updateExperience(index, 'jobTitle', value)}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6} md={6}>
+                  <EditableSection
+                    label="Employer"
+                    value={exp.employer}
+                    onChange={(value) => updateExperience(index, 'employer', value)}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6} md={6}>
+                  <EditableSection
+                    label="City"
+                    value={exp.city}
+                    onChange={(value) => updateExperience(index, 'city', value)}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6} md={6}>
+                  <EditableSection
+                    label="Start Date"
+                    value={exp.startDate}
+                    onChange={(value) => updateExperience(index, 'startDate', value)}
+                    type="month"
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6} md={6}>
+                  <EditableSection
+                    label="End Date"
+                    value={exp.endDate}
+                    onChange={(value) => updateExperience(index, 'endDate', value)}
+                    type="month"
+                    disabled={exp.current}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={exp.current}
+                        onChange={() => toggleCurrent(index)}
+                      />
+                    }
+                    label="I currently work here"
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <EditableSection
-                  label="Employer"
-                  value={exp.employer}
-                  onChange={(value) => updateExperience(index, 'employer', value)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <EditableSection
-                  label="City"
-                  value={exp.city}
-                  onChange={(value) => updateExperience(index, 'city', value)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <EditableSection
-                  label="Start Date"
-                  value={exp.startDate}
-                  onChange={(value) => updateExperience(index, 'startDate', value)}
-                  type="month"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <EditableSection
-                  label="End Date"
-                  value={exp.endDate}
-                  onChange={(value) => updateExperience(index, 'endDate', value)}
-                  type="month"
-                  disabled={exp.current}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={exp.current}
-                      onChange={() => toggleCurrent(index)}
-                    />
-                  }
-                  label="I currently work here"
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ mt: 2 }}>
-                <Typography variant="body1" gutterBottom sx={{ color }}>
-                  Job Description
-                </Typography>
-                <RichTextEditor
-                  value={exp.description}
-                  onChange={(value) => updateExperience(index, 'description', value)}
-                  fontStyle={fontStyle}
-                  fontSize={fontSize}
-                  color={color}
-                  lineSpacing={lineSpacing}
-                  sideMargin={sideMargin}
-                  placeholder="Enter job description..."
-                />
-              </Grid>
-            </Grid>
+              {/* Render Typography and RichTextEditor directly */}
+              <Typography variant="body1" gutterBottom sx={{ color, mt: 2 }}>
+                Job Description
+              </Typography>
+              <RichTextEditor
+                value={exp.description}
+                onChange={(value) => updateExperience(index, 'description', value)}
+                fontStyle={fontStyle}
+                fontSize={fontSize}
+                color={color}
+                lineSpacing={lineSpacing}
+                sideMargin={sideMargin}
+                placeholder="Enter job description..."
+              />
+            </>
           )}
         </Box>
       ))}
