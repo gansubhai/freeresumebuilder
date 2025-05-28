@@ -19,7 +19,6 @@ function EducationSection({ educations, setResumeData }) {
         return {
           ...prev,
           educations: [
-            ...prev.educations,
             {
               schoolName: '',
               schoolLocation: '',

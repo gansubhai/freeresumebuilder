@@ -84,7 +84,7 @@ function CreateResumeForm({
         summary: resumeData.summary || JSON.stringify([{ type: 'paragraph', children: [{ text: '' }] }]),
         skills: resumeData.skills || [],
         experiences: resumeData.experiences || [],
-        educations: resumeData.experiences || [],
+        educations: resumeData.educations || [],
         hobbies: resumeData.hobbies || [],
         languages: resumeData.languages || [],
         personalInfo: resumeData.personalInfo || {},
