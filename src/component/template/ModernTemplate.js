@@ -111,6 +111,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -130,6 +131,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -149,6 +151,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -168,6 +171,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -187,6 +191,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -206,6 +211,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -225,6 +231,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -244,6 +251,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -263,6 +271,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -282,6 +291,7 @@ function ModernTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           {normalizedCustomSections.map((section, index) => (
@@ -310,6 +320,7 @@ function ModernTemplate({
                   lineSpacing={lineSpacing}
                   sideMargin={sideMargin}
                   paragraphIndent={paragraphIndent}
+                  setResumeData={setResumeData}
                 />
               </SectionWrapper>
             </Box>

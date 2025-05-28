@@ -130,6 +130,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -149,6 +150,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -168,6 +170,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -187,6 +190,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -206,6 +210,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -225,6 +230,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -244,6 +250,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -263,6 +270,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -282,6 +290,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           <SectionWrapper
@@ -301,6 +310,7 @@ function ProfessionalTemplate({
               lineSpacing={lineSpacing}
               sideMargin={sideMargin}
               paragraphIndent={paragraphIndent}
+              setResumeData={setResumeData}
             />
           </SectionWrapper>
           {normalizedCustomSections.map((section, index) => (
@@ -329,6 +339,7 @@ function ProfessionalTemplate({
                   lineSpacing={lineSpacing}
                   sideMargin={sideMargin}
                   paragraphIndent={paragraphIndent}
+                  setResumeData={setResumeData}
                 />
               </SectionWrapper>
             </Box>

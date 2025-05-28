@@ -65,7 +65,7 @@ function SkillsSection({ skills, setResumeData }) {
       </Box>
       {skills.map((skill, index) => (
         <Grid container spacing={2} key={index} sx={{ mb: 1, alignItems: 'center' }}>
-          <Grid item xs={6}>
+          <Grid item sx={{ width: '200px' }}>
             <Chip
               label={skill.name}
               onDelete={() =>
@@ -74,9 +74,10 @@ function SkillsSection({ skills, setResumeData }) {
                   skills: prev.skills.filter((_, i) => i !== index),
                 }))
               }
+              sx={{ maxWidth: '100%' }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item sx={{ minWidth: '150px', maxWidth: '150px' }}>
             <FormControl fullWidth>
               <InputLabel>Proficiency</InputLabel>
               <Select
