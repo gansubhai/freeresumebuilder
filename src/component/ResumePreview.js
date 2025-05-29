@@ -33,17 +33,17 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
   };
 
   const [sectionStates, setSectionStates] = useState({
-    heading: true,
-    summary: true,
-    skills: true,
-    experience: true,
-    education: true,
-    hobbies: true,
-    languages: true,
-    personalInfo: true,
-    certifications: true,
-    accomplishments: true,
-    customSections: (resumeData?.customSections || []).map(() => true),
+    heading: false,
+    summary: false,
+    skills: false,
+    experience: false,
+    education: false,
+    hobbies: false,
+    languages: false,
+    personalInfo: false,
+    certifications: false,
+    accomplishments: false,
+    customSections: (resumeData?.customSections || []).map(() => false),
   });
 
   useEffect(() => {
@@ -52,6 +52,44 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
       customSections: (resumeData?.customSections || []).map(() => true),
     }));
   }, [resumeData?.customSections]);
+
+  // Expand all sections
+  const handleExpandAll = () => {
+    const newSectionStates = {
+      heading: true,
+      summary: true,
+      skills: true,
+      experience: true,
+      education: true,
+      hobbies: true,
+      languages: true,
+      personalInfo: true,
+      certifications: true,
+      accomplishments: true,
+      customSections: (resumeData?.customSections || []).map(() => true),
+    };
+    console.log('Expanding all sections:', newSectionStates);
+    setSectionStates(newSectionStates);
+  };
+
+  // Collapse all sections
+  const handleCollapseAll = () => {
+    const newSectionStates = {
+      heading: false,
+      summary: false,
+      skills: false,
+      experience: false,
+      education: false,
+      hobbies: false,
+      languages: false,
+      personalInfo: false,
+      certifications: false,
+      accomplishments: false,
+      customSections: (resumeData?.customSections || []).map(() => false),
+    };
+    console.log('Collapsing all sections:', newSectionStates);
+    setSectionStates(newSectionStates);
+  };
 
   const toggleSection = (section, index = null) => {
     setSectionStates((prev) => {
@@ -89,6 +127,8 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
           paragraphIndent={paragraphIndent}
           sectionStates={sectionStates}
           toggleSection={toggleSection}
+          handleExpandAll={handleExpandAll}
+          handleCollapseAll={handleCollapseAll}
         />
       </Box>
     </ErrorBoundary>

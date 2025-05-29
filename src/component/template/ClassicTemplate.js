@@ -16,6 +16,8 @@ function ClassicTemplate({
   paragraphIndent,
   sectionStates,
   toggleSection,
+  handleExpandAll,
+  handleCollapseAll,
 }) {
   const mmToPx = (mm) => mm * 3.78;
 
@@ -68,6 +70,8 @@ function ClassicTemplate({
           paragraphIndent={paragraphIndent}
           sectionStates={sectionStates}
           toggleSection={toggleSection}
+          handleExpandAll={handleExpandAll}
+          handleCollapseAll={handleCollapseAll}
         />
         <SectionWrapper
           title="Preview (Classic Template)"
@@ -75,164 +79,444 @@ function ClassicTemplate({
           toggleSection={() => toggleSection('preview')}
         >
           <Box sx={{ mt: mmToPx(sectionSpacing) / 96, fontFamily: fontStyle }}>
-            <Typography variant="h5" sx={{ fontSize: headingSize + 4, mb: mmToPx(paragraphSpacing) / 96 }}>
-              {safeResumeData.heading.firstName || ''} {safeResumeData.heading.lastName || ''}
-            </Typography>
-            <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-              {safeResumeData.heading.email || ''}
-            </Typography>
-            <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-              {safeResumeData.heading.city || ''}, {safeResumeData.heading.country || ''} | {safeResumeData.heading.pincode || ''}
-            </Typography>
-            <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-              {safeResumeData.heading.phone || ''} | {safeResumeData.heading.email || ''}
-            </Typography>
-            <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-              {safeResumeData.heading.linkedin || ''}
-            </Typography>
-            <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
-            <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
-                Summary
+            {/* Header */}
+            <Box sx={{ textAlign: 'center', mb: mmToPx(paragraphSpacing) / 96 }}>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontSize: headingSize + 8,
+                  fontWeight: 'bold',
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
+                {safeResumeData.heading.firstName || ''} {safeResumeData.heading.lastName || ''}
               </Typography>
-              <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-                {typeof safeResumeData.summary === 'string' && safeResumeData.summary.startsWith('[{')
-                  ? JSON.parse(safeResumeData.summary)
-                    .map((node) => node.children.map((child) => child.text).join(''))
-                    .join('\n')
-                  : safeResumeData.summary}
+              <Typography
+                sx={{
+                  fontSize: fontSize - 2,
+                  lineHeight: lineSpacing,
+                  mb: mmToPx(paragraphSpacing) / 96 / 4,
+                }}
+              >
+                {safeResumeData.heading.phone || ''}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: fontSize - 2,
+                  lineHeight: lineSpacing,
+                }}
+              >
+                <a
+                  href={`mailto:${safeResumeData.heading.email || ''}`}
+                  style={{ color, textDecoration: 'none' }}
+                >
+                  {safeResumeData.heading.email || ''}
+                </a>
               </Typography>
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Professional Summary */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
+                Professional Summary
+              </Typography>
+
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize,
+                    lineHeight: lineSpacing,
+                    mb: mmToPx(paragraphSpacing) / 96,
+                  }}
+                >
+                  {typeof safeResumeData.summary === 'string' &&
+                    safeResumeData.summary.startsWith('[{')
+                    ? JSON.parse(safeResumeData.summary)
+                      .map((node) => node.children.map((child) => child.text).join(''))
+                      .join('\n')
+                    : safeResumeData.summary}
+                </Typography>
+              </Box>
+            </Box>
+            <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Skills */}
+            <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Skills
               </Typography>
-              <List>
-                {safeResumeData.skills.map((skill, index) => (
-                  <ListItem key={index} sx={{ py: mmToPx(paragraphSpacing) / 96 / 2, pl: mmToPx(paragraphIndent) / 96 }}>
-                    <Typography sx={{ fontSize, lineHeight: lineSpacing }}>
-                      {skill.name || ''} ({skill.proficiency || ''})
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <List>
+                  {safeResumeData.skills.map((skill, index) => (
+                    <ListItem
+                      key={index}
+                      sx={{
+                        py: mmToPx(paragraphSpacing) / 96 / 2,
+                        pl: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize,
+                          lineHeight: lineSpacing,
+                        }}
+                      >
+                        {skill.name || ''} ({skill.proficiency || ''})
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Work History */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
-                Experience
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
+                Work History
               </Typography>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
               {safeResumeData.experiences.map((exp, index) => (
-                <Box key={index} sx={{ mb: mmToPx(paragraphSpacing) / 96 }}>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96 }}>
-                    {exp.jobTitle || ''}, {exp.employer || ''}, {exp.city || ''}
-                  </Typography>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96, mb: mmToPx(paragraphSpacing) / 96 }}>
+                <Box
+                  key={index}
+                  sx={{
+                    mb: mmToPx(paragraphSpacing) / 96,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: '70%',
+                      pl: mmToPx(paragraphIndent) / 96,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize,
+                        lineHeight: lineSpacing,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {exp.jobTitle || ''}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize,
+                        lineHeight: lineSpacing,
+                        mb: mmToPx(paragraphSpacing) / 96 / 2,
+                      }}
+                    >
+                      {exp.employer || ''}, {exp.city || ''}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize,
+                        lineHeight: lineSpacing,
+                      }}
+                    >
+                      {exp.description || ''}
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: fontSize - 2,
+                      lineHeight: lineSpacing,
+                      textAlign: 'right',
+                    }}
+                  >
                     {exp.startDate || ''} - {exp.current ? 'Present' : exp.endDate || ''}
-                  </Typography>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96 }}>
-                    {exp.description || ''}
                   </Typography>
                 </Box>
               ))}
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Education */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Education
               </Typography>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
               {safeResumeData.educations.map((edu, index) => (
-                <Box key={index} sx={{ mb: mmToPx(paragraphSpacing) / 96 }}>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96 }}>
-                    {edu.degree || ''}, {edu.fieldOfStudy || ''}
-                  </Typography>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96 }}>
-                    {edu.schoolName || ''}, {edu.schoolLocation || ''}
-                  </Typography>
-                  <Typography sx={{ fontSize, lineHeight: lineSpacing, pl: mmToPx(paragraphIndent) / 96 }}>
+                <Box
+                  key={index}
+                  sx={{
+                    mb: mmToPx(paragraphSpacing) / 96,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: '70%',
+                      pl: mmToPx(paragraphIndent) / 96,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize,
+                        lineHeight: lineSpacing,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {edu.degree || ''}, {edu.fieldOfStudy || ''}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize,
+                        lineHeight: lineSpacing,
+                      }}
+                    >
+                      {edu.schoolName || ''}, {edu.schoolLocation || ''}
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: fontSize - 2,
+                      lineHeight: lineSpacing,
+                      textAlign: 'right',
+                    }}
+                  >
                     {edu.graduationMonth || ''} {edu.graduationYear || ''}
                   </Typography>
                 </Box>
               ))}
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Languages */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
-                Hobbies and Interests
-              </Typography>
-              <List>
-                {safeResumeData.hobbies.map((hobby, index) => (
-                  <ListItem key={index} sx={{ py: mmToPx(paragraphSpacing) / 96 / 2, pl: mmToPx(paragraphIndent) / 96 }}>
-                    <Typography sx={{ fontSize, lineHeight: lineSpacing }}>
-                      {hobby || ''}
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-            <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
-            <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Languages
               </Typography>
-              <List>
-                {safeResumeData.languages.map((lang, index) => (
-                  <ListItem key={index} sx={{ py: mmToPx(paragraphSpacing) / 96 / 2, pl: mmToPx(paragraphIndent) / 96 }}>
-                    <Typography sx={{ fontSize, lineHeight: lineSpacing }}>
-                      {lang.name || ''} ({lang.proficiency || ''})
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <List>
+                  {safeResumeData.languages.map((lang, index) => (
+                    <ListItem
+                      key={index}
+                      sx={{
+                        py: mmToPx(paragraphSpacing) / 96 / 2,
+                        pl: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize,
+                          lineHeight: lineSpacing,
+                        }}
+                      >
+                        {lang.name || ''} ({lang.proficiency || ''})
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Certifications */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Certifications
               </Typography>
-              <List>
-                {safeResumeData.certifications.map((cert, index) => (
-                  <ListItem key={index} sx={{ py: mmToPx(paragraphSpacing) / 96 / 2, pl: mmToPx(paragraphIndent) / 96 }}>
-                    <Typography sx={{ fontSize, lineHeight: lineSpacing }}>
-                      {cert.name || ''} ({cert.date || ''})
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <List>
+                  {safeResumeData.certifications.map((cert, index) => (
+                    <ListItem
+                      key={index}
+                      sx={{
+                        py: mmToPx(paragraphSpacing) / 96 / 2,
+                        pl: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize,
+                          lineHeight: lineSpacing,
+                        }}
+                      >
+                        {cert.name || ''} ({cert.date || ''})
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Accomplishments */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Accomplishments
               </Typography>
-              <List>
-                {safeResumeData.accomplishments.map((acc, index) => (
-                  <ListItem key={index} sx={{ py: mmToPx(paragraphSpacing) / 96 / 2, pl: mmToPx(paragraphIndent) / 96 }}>
-                    <Typography sx={{ fontSize, lineHeight: lineSpacing }}>
-                      {acc || ''}
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <List>
+                  {safeResumeData.accomplishments.map((acc, index) => (
+                    <ListItem
+                      key={index}
+                      sx={{
+                        py: mmToPx(paragraphSpacing) / 96 / 2,
+                        pl: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize,
+                          lineHeight: lineSpacing,
+                        }}
+                      >
+                        {acc || ''}
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              >
+              </Box>
             </Box>
             <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+
+            {/* Personal Information */}
             <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-              <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: headingSize + 2,
+                  color,
+                  mb: mmToPx(paragraphSpacing) / 96 / 2,
+                }}
+              >
                 Personal Information
               </Typography>
-              <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-                Date of Birth: {safeResumeData.personalInfo.dateOfBirth || ''}
-              </Typography>
-              <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-                Gender: {safeResumeData.personalInfo.gender || ''}
-              </Typography>
-              <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-                Nationality: {safeResumeData.personalInfo.nationality || ''}
-              </Typography>
-              <Typography sx={{ fontSize, lineHeight: lineSpacing, mb: mmToPx(paragraphSpacing) / 96, pl: mmToPx(paragraphIndent) / 96 }}>
-                Marital Status: {safeResumeData.personalInfo.maritalStatus || ''}
-              </Typography>
+              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+              <Box
+                sx={{
+                  ml: '30%',
+                  width: '70%',
+                  pl: mmToPx(paragraphIndent) / 96,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize,
+                    lineHeight: lineSpacing,
+                    mb: mmToPx(paragraphSpacing) / 96 / 2,
+                  }}
+                >
+                  Date of Birth: safeResumeData.personalInfo.dateOfBirth || ''}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize,
+                    lineHeight: lineSpacing,
+                    mb: mmToPx(paragraphSpacing) / 96 / 2,
+                  }}
+                >
+                  Gender: {safeResumeData.personalInfo.gender || ''}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize,
+                    lineHeight: lineSpacing,
+                    mb: mmToPx(paragraphSpacing) / 96 / 2,
+                  }}
+                >
+                  Nationality: {safeResumeData.personalInfo.nationality || ''}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize,
+                    lineHeight: lineSpacing,
+                    mb: mmToPx(paragraphSpacing) / 96 / 2,
+                  }}
+                >
+                  Marital Status: {safeResumeData.personalInfo.maritalStatus || ''}
+                </Typography>
+              </Box>
             </Box>
           </Box>
         </SectionWrapper>

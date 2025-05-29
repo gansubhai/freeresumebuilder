@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import SectionWrapper from '../edit/SectionWrapper';
 import HeadingSection from '../edit/HeadingSection';
 import SummarySection from '../edit/SummarySection';
@@ -26,6 +26,8 @@ function CreateResumeForm({
     paragraphIndent,
     sectionStates,
     toggleSection,
+    handleCollapseAll,
+    handleExpandAll,
 }) {
     const mmToPx = (mm) => mm * 3.78;
 
@@ -72,6 +74,7 @@ function CreateResumeForm({
         setResumeData({ ...resumeData, customSections: newCustomSections });
     };
 
+
     // Normalize customSections to use 'title' instead of 'heading'
     const normalizedCustomSections = (resumeData.customSections || []).map((section) => ({
         title: section.heading || section.title || 'Untitled Section',
@@ -95,6 +98,22 @@ function CreateResumeForm({
 
     return (
         <Box sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', gap: 2, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Button
+                    variant="outlined"
+                    onClick={handleExpandAll}
+                    sx={{ color, borderColor: color }}
+                >
+                    Expand All
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={handleCollapseAll}
+                    sx={{ color, borderColor: color }}
+                >
+                    Collapse All
+                </Button>
+            </Box>
             <SectionWrapper
                 title="Heading"
                 isOpen={sectionStates.heading}
@@ -162,17 +181,12 @@ function CreateResumeForm({
             >
                 <ExperienceSection
                     experiences={safeResumeData.experiences}
-                    setExperiences={updateSection('experiences')}
+                    setResumeData={setResumeData}
                     color={color}
                     fontStyle={fontStyle}
                     fontSize={fontSize}
-                    headingSize={headingSize}
-                    sectionSpacing={sectionSpacing}
-                    paragraphSpacing={paragraphSpacing}
                     lineSpacing={lineSpacing}
                     sideMargin={sideMargin}
-                    paragraphIndent={paragraphIndent}
-                    setResumeData={setResumeData}
                 />
             </SectionWrapper>
             <SectionWrapper
@@ -182,16 +196,6 @@ function CreateResumeForm({
             >
                 <EducationSection
                     educations={safeResumeData.educations}
-                    setEducations={updateSection('educations')}
-                    color={color}
-                    fontStyle={fontStyle}
-                    fontSize={fontSize}
-                    headingSize={headingSize}
-                    sectionSpacing={sectionSpacing}
-                    paragraphSpacing={paragraphSpacing}
-                    lineSpacing={lineSpacing}
-                    sideMargin={sideMargin}
-                    paragraphIndent={paragraphIndent}
                     setResumeData={setResumeData}
                 />
             </SectionWrapper>
@@ -262,16 +266,6 @@ function CreateResumeForm({
             >
                 <CertificationsSection
                     certifications={safeResumeData.certifications}
-                    setCertifications={updateSection('certifications')}
-                    color={color}
-                    fontStyle={fontStyle}
-                    fontSize={fontSize}
-                    headingSize={headingSize}
-                    sectionSpacing={sectionSpacing}
-                    paragraphSpacing={paragraphSpacing}
-                    lineSpacing={lineSpacing}
-                    sideMargin={sideMargin}
-                    paragraphIndent={paragraphIndent}
                     setResumeData={setResumeData}
                 />
             </SectionWrapper>
