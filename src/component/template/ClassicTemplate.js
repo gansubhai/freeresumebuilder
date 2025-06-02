@@ -131,8 +131,8 @@ function ClassicTemplate({
 
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
@@ -166,11 +166,11 @@ function ClassicTemplate({
               >
                 Skills
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
@@ -210,7 +210,7 @@ function ClassicTemplate({
               >
                 Work History
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+
               {safeResumeData.experiences.map((exp, index) => (
                 <Box
                   key={index}
@@ -279,7 +279,6 @@ function ClassicTemplate({
               >
                 Education
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
               {safeResumeData.educations.map((edu, index) => (
                 <Box
                   key={index}
@@ -339,11 +338,10 @@ function ClassicTemplate({
               >
                 Languages
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
@@ -383,11 +381,11 @@ function ClassicTemplate({
               >
                 Certifications
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
@@ -427,11 +425,11 @@ function ClassicTemplate({
               >
                 Accomplishments
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
@@ -472,11 +470,11 @@ function ClassicTemplate({
               >
                 Personal Information
               </Typography>
-              <Divider sx={{ mb: mmToPx(paragraphSpacing) / 96 }} />
+
               <Box
                 sx={{
-                  ml: '30%',
-                  width: '70%',
+                  ml: '17%',
+                  width: '83%',
                   pl: mmToPx(paragraphIndent) / 96,
                 }}
               >
