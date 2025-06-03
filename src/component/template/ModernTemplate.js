@@ -1,4 +1,4 @@
-import { Box, Typography, Paper } from '@mui/material';
+import { List, ListItem, Box, Typography, Paper } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -86,14 +86,14 @@ function ModernTemplate({
     skills: resumeData?.skills || [],
     experiences: resumeData?.experiences || [],
     educations: resumeData?.educations || [],
-    accomplishments: resumeData?.achievements || [],
+    accomplishments: resumeData?.accomplishments || [],
     languages: resumeData?.languages || [],
     personalInfo: resumeData?.personalInfo || {},
   };
 
   // Log for debugging
   console.log('ModernTemplate: setResumeData is', typeof setResumeData);
-  console.log('ModernTemplate: safeResumeData.experiences', safeResumeData.experiences);
+  console.log('ModernTemplate: safeResumeData.accomplishments', safeResumeData.accomplishments);
 
   if (!resumeData) {
     return (
@@ -218,6 +218,7 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
                   Work Experience
@@ -257,6 +258,7 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
                   Skills
@@ -288,6 +290,7 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
                   Education
@@ -311,15 +314,31 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
-                  Achievements
+                  Accomplishments
                 </Typography>
-                {safeResumeData.accomplishments.map((acc, index) => (
-                  <Box key={index} sx={{ mb: 1 }}>
-                    {renderSlateJson(acc)}
-                  </Box>
-                ))}
+                <List>
+                  {safeResumeData.accomplishments.map((acc, index) => (
+                    <ListItem
+                      key={index}
+                      sx={{
+                        py: mmToPx(paragraphSpacing) / 96 / 2,
+                        pl: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize,
+                          lineHeight: lineSpacing,
+                        }}
+                      >
+                        {acc || ''}
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
                 {/* Languages */}
                 <Typography
                   variant="h6"
@@ -329,6 +348,7 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
                   Languages
@@ -347,6 +367,7 @@ function ModernTemplate({
                     fontWeight: 'bold',
                     borderBottom: `2px solid ${color}`,
                     mb: 2,
+                    color
                   }}
                 >
                   Personal Information
