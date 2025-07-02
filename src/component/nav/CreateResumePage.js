@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
+import { motion } from 'framer-motion';
 import Sidebar from '../Sidebar';
-import ResumePreview from '../ResumePreview';
 import RightSidebar from '../RightSidebar';
 import CustomSectionDialog from '../CustomSectionDialog';
+import ResumePreview from '../ResumePreview';
 import { generatePDF } from '../utils/pdfGenerator';
 
 function CreateResumePage() {
-  console.log("CreateResumePage");
   const templates = [
     { id: 'template1', name: 'Classic Template' },
     { id: 'template2', name: 'Modern Template' },
@@ -15,7 +15,7 @@ function CreateResumePage() {
   ];
 
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
-  const [color, setColor] = useState('#1976d2');
+  const [color, setColor] = useState('#1e3a8a');
   const [fontStyle, setFontStyle] = useState('Arial');
   const [fontSize, setFontSize] = useState(10);
   const [headingSize, setHeadingSize] = useState(16);
@@ -106,7 +106,7 @@ function CreateResumePage() {
   const handleOpenDialog = (section = null, index = null) => {
     setCustomSection(
       section
-        ? { heading: section.title, description: section.items?.[0]?.description || '' }
+        ? { heading: section.heading, description: section.description || '' }
         : { heading: '', description: '' }
     );
     setEditIndex(index);
@@ -151,13 +151,24 @@ function CreateResumePage() {
 
   // Calculate preview width based on sidebar states
   const previewWidth = () => {
-    if (isLeftSidebarOpen && isRightSidebarOpen) return '50%';
-    if (isLeftSidebarOpen || isRightSidebarOpen) return '75%';
-    return '90%';
+    if (isLeftSidebarOpen && isRightSidebarOpen) return { xs: '100%', md: '50%' };
+    if (isLeftSidebarOpen || isRightSidebarOpen) return { xs: '100%', md: '75%' };
+    return { xs: '100%', md: '90%' };
   };
 
   return (
-    <Box sx={{ mt: 8, display: 'flex', height: 'calc(100vh - 64px)' }}>
+    <Box
+      sx={{
+        mt: 8,
+        display: 'flex',
+        minHeight: 'calc(100vh - 64px)',
+        bgcolor: '#f4f7fa',
+      }}
+      component={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <Sidebar
         templates={templates}
         selectedTemplate={selectedTemplate}
@@ -183,8 +194,30 @@ function CreateResumePage() {
         isOpen={isLeftSidebarOpen}
         setIsOpen={setIsLeftSidebarOpen}
       />
-      <Box sx={{ flexGrow: 1, display: 'flex', p: 2, width: previewWidth() }}>
-        <Box ref={previewRef} sx={{ width: '100%', pr: isRightSidebarOpen ? 2 : 0 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          p: { xs: 1, md: 3 },
+          width: previewWidth(),
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        }}
+      >
+        <Box ref={previewRef} sx={{ width: '100%', maxWidth: '900px' }}>
+          <Box sx={{ mb: 2, textAlign: 'center' }}>
+            <Typography variant="h4" sx={{ color: '#1e3a8a', fontWeight: 'bold' }}>
+              Build Your Resume
+            </Typography>
+            <Tooltip
+              title="Use clear section names and keywords to ensure ATS compatibility"
+              placement="top"
+            >
+              <Typography variant="body2" sx={{ color: '#616161', mt: 1 }}>
+                Customize your resume below and download an ATS-optimized PDF.
+              </Typography>
+            </Tooltip>
+          </Box>
           <ResumePreview
             template={selectedTemplate}
             resumeData={resumeData}
