@@ -1,6 +1,13 @@
 import { Box, Typography, Paper, Divider, Grid, LinearProgress } from '@mui/material';
+import { motion } from 'framer-motion';
 import SectionWrapper from '../edit/SectionWrapper';
 import CreateResumeForm from '../createResumeForm/CreateResumeForm';
+
+// Animation variants for sections
+const sectionVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
 
 function ProfessionalTemplate({
   resumeData,
@@ -16,8 +23,77 @@ function ProfessionalTemplate({
   paragraphIndent,
   sectionStates,
   toggleSection,
+  handleExpandAll,
+  handleCollapseAll,
 }) {
   const mmToPx = (mm) => mm * 3.78;
+
+  // Helper to render Slate JSON with bullets and formatting
+  const renderSlateJson = (jsonString) => {
+    try {
+      const nodes = typeof jsonString === 'string' && jsonString.startsWith('[')
+        ? JSON.parse(jsonString)
+        : [{ type: 'paragraph', children: [{ text: jsonString || '' }] }];
+      return nodes.map((node, index) => {
+        if (node.type === 'bulleted-list') {
+          return (
+            <Box key={index} component="ul" sx={{ pl: 4, m: 0, listStyleType: 'disc' }}>
+              {node.children.map((child, i) => (
+                <Box
+                  key={i}
+                  component="li"
+                  sx={{ fontSize: fontSize, lineHeight: lineSpacing }}
+                >
+                  {child.children.map((textNode, j) => (
+                    <Typography
+                      key={j}
+                      component="span"
+                      sx={{
+                        fontSize: fontSize,
+                        fontWeight: textNode.bold ? 'bold' : 'normal',
+                        fontStyle: textNode.italic ? 'italic' : 'normal',
+                        textDecoration: textNode.underline ? 'underline' : 'none',
+                        color: '#333333',
+                      }}
+                    >
+                      {textNode.text}
+                    </Typography>
+                  ))}
+                </Box>
+              ))}
+            </Box>
+          );
+        }
+        return (
+          <Typography
+            key={index}
+            sx={{ fontSize: fontSize, lineHeight: lineSpacing, color: '#333333' }}
+          >
+            {node.children.map((child, i) => (
+              <Typography
+                key={i}
+                component="span"
+                sx={{
+                  fontWeight: child.bold ? 'bold' : 'normal',
+                  fontStyle: child.italic ? 'italic' : 'normal',
+                  textDecoration: child.underline ? 'underline' : 'none',
+                }}
+              >
+                {child.text}
+              </Typography>
+            ))}
+          </Typography>
+        );
+      });
+    } catch (error) {
+      console.error('Error parsing Slate JSON:', error);
+      return (
+        <Typography sx={{ fontSize: fontSize, lineHeight: lineSpacing, color: '#333333' }}>
+          {jsonString || ''}
+        </Typography>
+      );
+    }
+  };
 
   // Reimplement renderProficiencyBars
   const renderProficiencyBars = (proficiency) => {
@@ -33,7 +109,13 @@ function ProfessionalTemplate({
       <LinearProgress
         variant="determinate"
         value={level}
-        sx={{ width: '100px', height: 8, mt: 0.5 }}
+        sx={{
+          width: '100px',
+          height: 8,
+          mt: 0.5,
+          backgroundColor: '#e0e0e0',
+          '& .MuiLinearProgress-bar': { backgroundColor: '#1e3a8a' },
+        }}
       />
     );
   };
@@ -50,27 +132,35 @@ function ProfessionalTemplate({
     personalInfo: resumeData?.personalInfo || {},
     certifications: resumeData?.certifications || [],
     accomplishments: resumeData?.accomplishments || [],
+    customSections: resumeData?.customSections || [],
   };
 
   // Return loading state if resumeData is not ready
   if (!resumeData) {
     return (
-      <Box sx={{ width: '100%', p: 4, overflowY: 'auto' }}>
-        <Typography>Loading resume data...</Typography>
+      <Box sx={{ width: '100%', p: 4, overflowY: 'auto', textAlign: 'center' }}>
+        <Typography sx={{ color: '#1e3a8a' }}>Loading resume data...</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ width: '100%', p: 4, overflowY: 'auto' }}>
+    <Box sx={{ width: '100%', p: { xs: 2, md: 4 }, overflowY: 'auto' }}>
       <Paper
-        elevation={1}
+        elevation={3}
         sx={{
+          border: `2px solid ${color}`,
           p: 3,
           fontFamily: fontStyle,
-          mx: mmToPx(sideMargin) / 96,
-          border: `1px solid #e0e0e0`,
+          mx: { xs: 0, md: mmToPx(sideMargin) / 96 },
+          bgcolor: '#ffffff',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         aria-label="Resume preview"
       >
         <CreateResumeForm
@@ -87,6 +177,8 @@ function ProfessionalTemplate({
           paragraphIndent={paragraphIndent}
           sectionStates={sectionStates}
           toggleSection={toggleSection}
+          handleExpandAll={handleExpandAll}
+          handleCollapseAll={handleCollapseAll}
         />
         <SectionWrapper
           title="Preview (Professional Template)"
@@ -96,34 +188,46 @@ function ProfessionalTemplate({
           <Grid container spacing={2}>
             <Grid
               item
-              xs={4}
+              xs={12}
+              md={4}
               sx={{
                 bgcolor: color,
                 color: '#fff',
                 p: 2,
                 fontFamily: fontStyle,
-                mx: mmToPx(sideMargin) / 96,
               }}
+              component={motion.div}
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
             >
               <Box>
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize + 2,
+                    fontWeight: 'bold',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   Contact
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize,
+                    fontSize: fontSize - 2,
                     lineHeight: lineSpacing,
                     mb: mmToPx(paragraphSpacing) / 96,
                     pl: mmToPx(paragraphIndent) / 96,
                   }}
                 >
-                  {safeResumeData.heading.city || ''}, {safeResumeData.heading.country || ''} {safeResumeData.heading.pincode || ''}
+                  {safeResumeData.heading.city || ''}, {safeResumeData.heading.country || ''}{' '}
+                  {safeResumeData.heading.pincode || ''}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize,
+                    fontSize: fontSize - 2,
                     lineHeight: lineSpacing,
                     mb: mmToPx(paragraphSpacing) / 96,
                     pl: mmToPx(paragraphIndent) / 96,
@@ -134,29 +238,46 @@ function ProfessionalTemplate({
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize,
+                    fontSize: fontSize - 2,
                     lineHeight: lineSpacing,
                     mb: mmToPx(paragraphSpacing) / 96,
                     pl: mmToPx(paragraphIndent) / 96,
                   }}
                 >
-                  Email: {safeResumeData.heading.email || ''}
+                  <a
+                    href={`mailto:${safeResumeData.heading.email || ''}`}
+                    style={{ color: '#10b981', textDecoration: 'none' }}
+                  >
+                    Email: {safeResumeData.heading.email || ''}
+                  </a>
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize,
+                    fontSize: fontSize - 2,
                     lineHeight: lineSpacing,
                     mb: mmToPx(paragraphSpacing) / 96,
                     pl: mmToPx(paragraphIndent) / 96,
-                    color: '#fff',
-                    textDecoration: 'underline',
                   }}
                 >
-                  LinkedIn: {safeResumeData.heading.linkedin || ''}
+                  <a
+                    href={safeResumeData.heading.linkedin || ''}
+                    style={{ color: '#10b981', textDecoration: 'none' }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    LinkedIn: {safeResumeData.heading.linkedin || ''}
+                  </a>
                 </Typography>
                 <Divider sx={{ my: mmToPx(sectionSpacing) / 96, bgcolor: '#fff' }} />
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize + 2,
+                    fontWeight: 'bold',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   Languages
                 </Typography>
                 {safeResumeData.languages.map((lang, index) => (
@@ -165,13 +286,14 @@ function ProfessionalTemplate({
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       mb: mmToPx(paragraphSpacing) / 96,
                     }}
                   >
                     <Typography
                       variant="body2"
                       sx={{
-                        fontSize,
+                        fontSize: fontSize - 2,
                         lineHeight: lineSpacing,
                         pl: mmToPx(paragraphIndent) / 96,
                       }}
@@ -182,7 +304,14 @@ function ProfessionalTemplate({
                   </Box>
                 ))}
                 <Divider sx={{ my: mmToPx(sectionSpacing) / 96, bgcolor: '#fff' }} />
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize + 2,
+                    fontWeight: 'bold',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   Skills
                 </Typography>
                 {safeResumeData.skills.map((skill, index) => (
@@ -191,13 +320,14 @@ function ProfessionalTemplate({
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       mb: mmToPx(paragraphSpacing) / 96,
                     }}
                   >
                     <Typography
                       variant="body2"
                       sx={{
-                        fontSize,
+                        fontSize: fontSize - 2,
                         lineHeight: lineSpacing,
                         pl: mmToPx(paragraphIndent) / 96,
                       }}
@@ -208,7 +338,14 @@ function ProfessionalTemplate({
                   </Box>
                 ))}
                 <Divider sx={{ my: mmToPx(sectionSpacing) / 96, bgcolor: '#fff' }} />
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize + 2,
+                    fontWeight: 'bold',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   Certifications
                 </Typography>
                 {safeResumeData.certifications.map((cert, index) => (
@@ -216,17 +353,24 @@ function ProfessionalTemplate({
                     key={index}
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize - 2,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
                     }}
                   >
-                    {cert.name || ''} ({cert.date || ''})
+                    • {cert.name || ''} ({cert.date || ''})
                   </Typography>
                 ))}
                 <Divider sx={{ my: mmToPx(sectionSpacing) / 96, bgcolor: '#fff' }} />
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize + 2,
+                    fontWeight: 'bold',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   Hobbies
                 </Typography>
                 {safeResumeData.hobbies.map((hobby, index) => (
@@ -234,7 +378,7 @@ function ProfessionalTemplate({
                     key={index}
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize - 2,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
@@ -245,38 +389,65 @@ function ProfessionalTemplate({
                 ))}
               </Box>
             </Grid>
-            <Grid item xs={8}>
+            <Grid
+              item
+              xs={12}
+              md={8}
+              component={motion.div}
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+            >
               <Box>
-                <Typography variant="h4" sx={{ fontSize: headingSize + 4, mb: mmToPx(paragraphSpacing) / 96 }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontSize: headingSize + 8,
+                    fontWeight: 'bold',
+                    color: '#1e3a8a',
+                    mb: mmToPx(paragraphSpacing) / 96,
+                  }}
+                >
                   {safeResumeData.heading.firstName || ''} {safeResumeData.heading.lastName || ''}
                 </Typography>
-                <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: headingSize,
+                    color: '#333333',
+                    mb: mmToPx(sectionSpacing) / 96,
+                  }}
+                >
                   {safeResumeData.heading.title || ''}
                 </Typography>
-                <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+                <Divider sx={{ my: mmToPx(sectionSpacing) / 96, borderColor: color }} />
                 <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-                  <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
-                    Summary
-                  </Typography>
                   <Typography
-                    variant="body2"
+                    variant="h6"
                     sx={{
-                      fontSize,
-                      lineHeight: lineSpacing,
+                      fontSize: headingSize + 2,
+                      fontWeight: 'bold',
+                      color: '#1e3a8a',
                       mb: mmToPx(paragraphSpacing) / 96,
-                      pl: mmToPx(paragraphIndent) / 96,
                     }}
                   >
-                    {typeof safeResumeData.summary === 'string' && safeResumeData.summary.startsWith('[{')
-                      ? JSON.parse(safeResumeData.summary)
-                        .map((node) => node.children.map((child) => child.text).join(''))
-                        .join('\n')
-                      : safeResumeData.summary}
+                    Professional Summary
                   </Typography>
+                  <Box sx={{ pl: mmToPx(paragraphIndent) / 96 }}>
+                    {renderSlateJson(safeResumeData.summary)}
+                  </Box>
                 </Box>
-                <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+                <Divider sx={{ my: mmToPx(sectionSpacing) / 96, borderColor: color }} />
                 <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-                  <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: headingSize + 2,
+                      fontWeight: 'bold',
+                      color: '#1e3a8a',
+                      mb: mmToPx(paragraphSpacing) / 96,
+                    }}
+                  >
                     Experience
                   </Typography>
                   {safeResumeData.experiences.map((exp, index) => (
@@ -284,9 +455,11 @@ function ProfessionalTemplate({
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize,
+                          fontSize: fontSize,
+                          fontWeight: 'bold',
                           lineHeight: lineSpacing,
                           pl: mmToPx(paragraphIndent) / 96,
+                          color: '#333333',
                         }}
                       >
                         {exp.jobTitle || ''}, {exp.employer || ''}, {exp.city || ''}
@@ -294,30 +467,32 @@ function ProfessionalTemplate({
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize,
+                          fontSize: fontSize - 2,
                           lineHeight: lineSpacing,
                           pl: mmToPx(paragraphIndent) / 96,
                           mb: mmToPx(paragraphSpacing) / 96,
+                          color: '#616161',
                         }}
                       >
                         {exp.startDate || ''} - {exp.current ? 'Present' : exp.endDate || ''}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          fontSize,
-                          lineHeight: lineSpacing,
-                          pl: mmToPx(paragraphIndent) / 96,
-                        }}
-                      >
-                        {exp.description || ''}
-                      </Typography>
+                      <Box sx={{ pl: mmToPx(paragraphIndent) / 96 }}>
+                        {renderSlateJson(exp.description)}
+                      </Box>
                     </Box>
                   ))}
                 </Box>
-                <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+                <Divider sx={{ my: mmToPx(sectionSpacing) / 96, borderColor: color }} />
                 <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-                  <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: headingSize + 2,
+                      fontWeight: 'bold',
+                      color: '#1e3a8a',
+                      mb: mmToPx(paragraphSpacing) / 96,
+                    }}
+                  >
                     Education
                   </Typography>
                   {safeResumeData.educations.map((edu, index) => (
@@ -325,9 +500,11 @@ function ProfessionalTemplate({
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize,
+                          fontSize: fontSize,
+                          fontWeight: 'bold',
                           lineHeight: lineSpacing,
                           pl: mmToPx(paragraphIndent) / 96,
+                          color: '#333333',
                         }}
                       >
                         {edu.degree || ''}, {edu.fieldOfStudy || ''}
@@ -335,9 +512,10 @@ function ProfessionalTemplate({
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize,
+                          fontSize: fontSize,
                           lineHeight: lineSpacing,
                           pl: mmToPx(paragraphIndent) / 96,
+                          color: '#333333',
                         }}
                       >
                         {edu.schoolName || ''}, {edu.schoolLocation || ''}
@@ -345,9 +523,10 @@ function ProfessionalTemplate({
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize,
+                          fontSize: fontSize - 2,
                           lineHeight: lineSpacing,
                           pl: mmToPx(paragraphIndent) / 96,
+                          color: '#616161',
                         }}
                       >
                         {edu.graduationMonth || ''} {edu.graduationYear || ''}
@@ -355,9 +534,17 @@ function ProfessionalTemplate({
                     </Box>
                   ))}
                 </Box>
-                <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+                <Divider sx={{ my: mmToPx(sectionSpacing) / 96, borderColor: color }} />
                 <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-                  <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: headingSize + 2,
+                      fontWeight: 'bold',
+                      color: '#1e3a8a',
+                      mb: mmToPx(paragraphSpacing) / 96,
+                    }}
+                  >
                     Accomplishments
                   </Typography>
                   {safeResumeData.accomplishments.map((acc, index) => (
@@ -365,28 +552,38 @@ function ProfessionalTemplate({
                       key={index}
                       variant="body2"
                       sx={{
-                        fontSize,
+                        fontSize: fontSize,
                         lineHeight: lineSpacing,
                         mb: mmToPx(paragraphSpacing) / 96,
                         pl: mmToPx(paragraphIndent) / 96,
+                        color: '#333333',
                       }}
                     >
                       • {acc || ''}
                     </Typography>
                   ))}
                 </Box>
-                <Divider sx={{ my: mmToPx(sectionSpacing) / 96 }} />
+                <Divider sx={{ my: mmToPx(sectionSpacing) / 96, borderColor: color }} />
                 <Box sx={{ mt: mmToPx(sectionSpacing) / 96 }}>
-                  <Typography variant="h6" sx={{ fontSize: headingSize, mb: mmToPx(sectionSpacing) / 96 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: headingSize + 2,
+                      fontWeight: 'bold',
+                      color: '#1e3a8a',
+                      mb: mmToPx(paragraphSpacing) / 96,
+                    }}
+                  >
                     Personal Information
                   </Typography>
                   <Typography
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
+                      color: '#333333',
                     }}
                   >
                     Date of Birth: {safeResumeData.personalInfo.dateOfBirth || ''}
@@ -394,10 +591,11 @@ function ProfessionalTemplate({
                   <Typography
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
+                      color: '#333333',
                     }}
                   >
                     Gender: {safeResumeData.personalInfo.gender || ''}
@@ -405,10 +603,11 @@ function ProfessionalTemplate({
                   <Typography
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
+                      color: '#333333',
                     }}
                   >
                     Nationality: {safeResumeData.personalInfo.nationality || ''}
@@ -416,15 +615,38 @@ function ProfessionalTemplate({
                   <Typography
                     variant="body2"
                     sx={{
-                      fontSize,
+                      fontSize: fontSize,
                       lineHeight: lineSpacing,
                       mb: mmToPx(paragraphSpacing) / 96,
                       pl: mmToPx(paragraphIndent) / 96,
+                      color: '#333333',
                     }}
                   >
                     Marital Status: {safeResumeData.personalInfo.maritalStatus || ''}
                   </Typography>
                 </Box>
+                {/* Custom Sections */}
+                {safeResumeData.customSections.length > 0 &&
+                  safeResumeData.customSections.map((section, index) => (
+                    <Box
+                      key={index}
+                      sx={{ mt: mmToPx(sectionSpacing) / 96 }}
+                      component={motion.div}
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
+                      <SectionWrapper
+                        title={section.heading || `Custom Section ${index + 1}`}
+                        isOpen={sectionStates.customSections?.[index] || false}
+                        toggleSection={() => toggleSection('customSections', index)}
+                      >
+                        <Box sx={{ pl: mmToPx(paragraphIndent) / 96 }}>
+                          {renderSlateJson(section.description)}
+                        </Box>
+                      </SectionWrapper>
+                    </Box>
+                  ))}
               </Box>
             </Grid>
           </Grid>
