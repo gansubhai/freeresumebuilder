@@ -185,7 +185,7 @@ function ProfessionalTemplate({
           isOpen={sectionStates.preview}
           toggleSection={() => toggleSection('preview')}
         >
-          <Grid container spacing={2}>
+          <Grid id="resume-container" container spacing={2}>
             <Grid
               item
               xs={12}

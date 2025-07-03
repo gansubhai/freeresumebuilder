@@ -135,7 +135,7 @@ function ModernTemplate({
           isOpen={sectionStates.preview}
           toggleSection={() => toggleSection('preview')}
         >
-          <Box sx={{ fontFamily: fontStyle }}>
+          <Box id="resume-container" sx={{ fontFamily: fontStyle }}>
             {/* Header and Summary with Background */}
             <Box
               sx={{
