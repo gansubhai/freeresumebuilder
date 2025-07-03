@@ -93,7 +93,7 @@ function ClassicTemplate({
           isOpen={sectionStates.preview}
           toggleSection={() => toggleSection('preview')}
         >
-          <Box sx={{ mt: mmToPx(sectionSpacing) / 96, fontFamily: fontStyle }}>
+          <Box id="resume-container" sx={{ mt: mmToPx(sectionSpacing) / 96, fontFamily: fontStyle }}>
             {/* Header */}
             <Box
               sx={{ textAlign: 'center', mb: mmToPx(paragraphSpacing) / 96 }}
