@@ -98,7 +98,11 @@ function CreateResumeForm({
 
     return (
         <Box sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', gap: 2, mb: mmToPx(sectionSpacing) / 96 }}>
+            <Box sx={{
+                display: 'flex',
+                gap: 2,
+                mb: 3,
+            }}>
                 <Button
                     variant="outlined"
                     onClick={handleExpandAll}
