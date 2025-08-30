@@ -63,10 +63,10 @@ function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <Typography variant="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography variant="h2" gutterBottom sx={{ fontWeight: 'bold', color: '#000000' }}>
             Build Your Perfect Resume
           </Typography>
-          <Typography variant="h5" sx={{ mb: 4, maxWidth: '600px', mx: 'auto' }}>
+          <Typography variant="h5" sx={{ mb: 4, maxWidth: '600px', mx: 'auto', color: '#000000' }}>
             Create a professional resume for free with our easy-to-use builder. Stand out and land your dream job!
           </Typography>
           <Button
