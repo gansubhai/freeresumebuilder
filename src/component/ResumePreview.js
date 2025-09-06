@@ -43,6 +43,7 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
     personalInfo: false,
     certifications: false,
     accomplishments: false,
+    preview: true, // Always show preview section
     customSections: (resumeData?.customSections || []).map(() => false),
   });
 
@@ -66,6 +67,7 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
       personalInfo: true,
       certifications: true,
       accomplishments: true,
+      preview: true,
       customSections: (resumeData?.customSections || []).map(() => true),
     };
     console.log('Expanding all sections:', newSectionStates);
@@ -85,6 +87,7 @@ function ResumePreview({ resumeData, template, setResumeData, color, fontStyle, 
       personalInfo: false,
       certifications: false,
       accomplishments: false,
+      preview: true, // Keep preview section open
       customSections: (resumeData?.customSections || []).map(() => false),
     };
     console.log('Collapsing all sections:', newSectionStates);
